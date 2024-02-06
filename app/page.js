@@ -6,14 +6,82 @@ import Webcam from "react-webcam";
 import { drawMesh } from "./utilities.js";
 import { CiLocationArrow1 } from "react-icons/ci";
 
-
 export default function Home() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const [leftvalue, setLeftValue] = useState(0);
   const [rightvalue, setRightValue] = useState(0);
-  const [normalizedValue, setNormalizedValue] = useState(0);
   const [faceAngle, setFaceAngle] = useState(0);
+
+
+  const [audioCtx, setAudioCtx] = useState(null);
+  const [panNode, setPanNode] = useState(null);
+  const [panControlValue, setPanControlValue] = useState(0);
+  const [audioIsPlaying, setAudioIsPlaying] = useState(false);
+
+  useEffect(() => {
+    const audioElt = document.querySelector("audio");
+
+    const setupAudioContext = () => {
+      if (!audioCtx) {
+        const newAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        setAudioCtx(newAudioCtx);
+      }
+    };
+
+    const setupPanningNode = () => {
+      if (audioCtx && !panNode) {
+        const source = audioCtx.createMediaElementSource(audioElt);
+        const newPanNode = audioCtx.createStereoPanner();
+        setPanNode(newPanNode);
+
+        source.connect(newPanNode);
+        newPanNode.connect(audioCtx.destination);
+      }
+    };
+
+    setupAudioContext();
+    setupPanningNode();
+
+    return () => {
+      audioElt.removeEventListener("play", handlePlay);
+    };
+  }, [audioCtx]);
+
+  useEffect(() => {
+    if (panNode) {
+      panNode.pan.value = panControlValue || 0;
+      console.log(panControlValue);
+    }
+  }, [panNode, panControlValue]);
+
+  const handlePlay = () => {
+    setAudioIsPlaying(true);
+  };
+
+  const handlePause = () => {
+    setAudioIsPlaying(false);
+  };
+
+  useEffect(() => {
+    const audioElt = document.querySelector("audio");
+
+    audioElt.addEventListener("play", handlePlay);
+    audioElt.addEventListener("pause", handlePause);
+
+    return () => {
+      audioElt.removeEventListener("play", handlePlay);
+      audioElt.removeEventListener("pause", handlePause);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (audioIsPlaying && audioCtx) {
+      const audioElt = document.querySelector("audio");
+      audioElt.play();
+    }
+  }, [audioIsPlaying, audioCtx]);
+
 
   const runFacemesh = async () => {
     const net = await facemesh.load({
@@ -51,13 +119,13 @@ export default function Home() {
   const audioBalancerUI = (yaw) => {
     const normalizedYaw = yaw - 90;
     const normalizedValue = normalizedYaw / 180;
-    setNormalizedValue(normalizedValue * 2);
 
     const rightVolume = Math.max(0.5 - normalizedValue, 0) + 0.1;
     const leftVolume = Math.max(0.5 + normalizedValue, 0) + 0.1;
 
     setLeftValue(leftVolume.toFixed(3));
     setRightValue(rightVolume.toFixed(3));
+    setPanControlValue(parseFloat(normalizedValue*-2));
   };
 
   const detect = async (net) => {
@@ -78,14 +146,12 @@ export default function Home() {
       canvasRef.current.width = videoWidth;
       canvasRef.current.height = videoHeight;
 
-      
       const face = await net.estimateFaces(video);
       var yaw;
-      try{
-       yaw = calculateYawAndPitch(face[0].scaledMesh);
-      } catch (e) {
-      }
-      
+      try {
+        yaw = calculateYawAndPitch(face[0].scaledMesh);
+      } catch (e) {}
+
       audioBalancerUI(yaw);
 
       const ctx = canvasRef.current.getContext("2d");
@@ -102,8 +168,10 @@ export default function Home() {
   return (
     <>
       <div className="flex flex-col">
+        
         {/* Webcam and Canvas */}
         <div className="flex mt-10">
+          <div className=" flex">
           <Webcam
             ref={webcamRef}
             style={{
@@ -120,7 +188,14 @@ export default function Home() {
             }}
             mirrored={true}
           />
-
+          <audio controls>
+        <source src="/resources/audio.ogg" type="audio/ogg" />
+        <source src="/resources/audio.ogg" type="audio/mp3" />
+        <p>This demo needs a browser supporting the &lt;audio&gt; element.</p>
+      </audio>
+          
+          </div>
+          
           <canvas
             ref={canvasRef}
             style={{
@@ -136,6 +211,7 @@ export default function Home() {
               transform: "scaleX(-1)", // Apply horizontal mirroring
             }}
           />
+          
         </div>
 
         <div>
@@ -148,9 +224,13 @@ export default function Home() {
                 <div className="items-center">
                   <h3 className="text-center text-slate-400"> Left</h3>
 
-                  <div className="w-3 h-48 ml-4 bg-green-500 rounded-full overflow-hidden mt-2">
+                  <div className="w-8 h-48 ml-4 bg-green-500 rounded-full overflow-hidden mt-2">
                     <div
-                      style={{ height: `${(1 - leftvalue) * 100}%` ,transitionTimingFunction: "ease-in-out", transition: "0.2s"}}
+                      style={{
+                        height: `${(1 - leftvalue) * 100}%`,
+                        transitionTimingFunction: "ease-in-out",
+                        transition: "0.2s",
+                      }}
                       className="h-full bg-gray-800"
                     ></div>
                   </div>
@@ -159,9 +239,13 @@ export default function Home() {
                 <div className="items-center">
                   <h3 className="text-center text-slate-400"> Right</h3>
 
-                  <div className="w-3 h-48 ml-4 bg-green-500 rounded-full overflow-hidden mt-2">
+                  <div className="w-8 h-48 ml-4 bg-green-500 rounded-full overflow-hidden mt-2">
                     <div
-                      style={{ height: `${(1 - rightvalue) * 100}%`, transitionTimingFunction: "ease-in-out", transition: "0.2s"}}
+                      style={{
+                        height: `${(1 - rightvalue) * 100}%`,
+                        transitionTimingFunction: "ease-in-out",
+                        transition: "0.2s",
+                      }}
                       className="h-full bg-gray-800"
                     ></div>
                   </div>
@@ -175,7 +259,11 @@ export default function Home() {
               <h3> Face Rotation </h3>
               <CiLocationArrow1
                 size={100}
-                style={{ rotate: `${-135 + faceAngle}deg`, transitionTimingFunction: "ease-in-out", transition: "0.2s"}}
+                style={{
+                  rotate: `${-135 + faceAngle}deg`,
+                  transitionTimingFunction: "ease-in-out",
+                  transition: "0.2s",
+                }}
                 className="mt-4"
               />
               <h4 className="text-center text-slate-400">
@@ -186,6 +274,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+
     </>
   );
 }
