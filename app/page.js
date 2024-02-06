@@ -13,7 +13,6 @@ export default function Home() {
   const [rightvalue, setRightValue] = useState(0);
   const [faceAngle, setFaceAngle] = useState(0);
 
-
   const [audioCtx, setAudioCtx] = useState(null);
   const [panNode, setPanNode] = useState(null);
   const [panControlValue, setPanControlValue] = useState(0);
@@ -24,7 +23,8 @@ export default function Home() {
 
     const setupAudioContext = () => {
       if (!audioCtx) {
-        const newAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const newAudioCtx = new (window.AudioContext ||
+          window.webkitAudioContext)();
         setAudioCtx(newAudioCtx);
       }
     };
@@ -82,7 +82,6 @@ export default function Home() {
     }
   }, [audioIsPlaying, audioCtx]);
 
-
   const runFacemesh = async () => {
     const net = await facemesh.load({
       inputResolution: { width: 1280, height: 720 },
@@ -125,7 +124,7 @@ export default function Home() {
 
     setLeftValue(leftVolume.toFixed(3));
     setRightValue(rightVolume.toFixed(3));
-    setPanControlValue(parseFloat(normalizedValue*-2));
+    setPanControlValue(parseFloat(normalizedValue * -2));
   };
 
   const detect = async (net) => {
@@ -167,114 +166,108 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex flex-col">
-        
-        {/* Webcam and Canvas */}
-        <div className="flex mt-10">
-          <div className=" flex">
-          <Webcam
-            ref={webcamRef}
-            style={{
-              position: "absolute",
-              marginLeft: "auto",
-              marginRight: "auto",
-              left: 0,
-              right: 0,
-              textAlign: "center",
-              zIndex: 9,
-              width: 640,
-              height: 480,
-              borderRadius: 20,
-            }}
-            mirrored={true}
-          />
-          <audio controls>
-        <source src="/resources/audio.ogg" type="audio/ogg" />
-        <source src="/resources/audio.ogg" type="audio/mp3" />
-        <p>This demo needs a browser supporting the &lt;audio&gt; element.</p>
-      </audio>
-          
-          </div>
-          
-          <canvas
-            ref={canvasRef}
-            style={{
-              position: "absolute",
-              marginLeft: "auto",
-              marginRight: "auto",
-              left: 0,
-              right: 0,
-              textAlign: "center",
-              zIndex: 9,
-              width: 640,
-              height: 480,
-              transform: "scaleX(-1)", // Apply horizontal mirroring
-            }}
-          />
-          
-        </div>
-
+      <div class="flex justify-center gap-10 ">
         <div>
-          <div className="justify-center inline-block ml-32 -mt-10">
-            {/* Audio Channels */}
-            <div className="flex flex-col m-10 bg-gray-900 justify-center items-center w-52 h-80 rounded-2xl gap-7">
-              <h3> Audio Channels Gain </h3>
+          <div className="flex flex-col bg-gray-900 justify-center items-center w-52 h-80 rounded-2xl gap-7">
+            <h3> Audio Channels Gain </h3>
 
-              <div className="flex gap-12">
-                <div className="items-center">
-                  <h3 className="text-center text-slate-400"> Left</h3>
+            <div className="flex gap-12">
+              <div className="items-center">
+                <h3 className="text-center text-slate-400"> Left</h3>
 
-                  <div className="w-8 h-48 ml-4 bg-green-500 rounded-full overflow-hidden mt-2">
-                    <div
-                      style={{
-                        height: `${(1 - leftvalue) * 100}%`,
-                        transitionTimingFunction: "ease-in-out",
-                        transition: "0.2s",
-                      }}
-                      className="h-full bg-gray-800"
-                    ></div>
-                  </div>
+                <div className="w-8 h-48 ml-4 bg-green-500 rounded-full overflow-hidden mt-2">
+                  <div
+                    style={{
+                      height: `${(1 - leftvalue) * 100}%`,
+                      transitionTimingFunction: "ease-in-out",
+                      transition: "0.2s",
+                    }}
+                    className="h-full bg-gray-800"
+                  ></div>
                 </div>
+              </div>
 
-                <div className="items-center">
-                  <h3 className="text-center text-slate-400"> Right</h3>
+              <div className="items-center">
+                <h3 className="text-center text-slate-400"> Right</h3>
 
-                  <div className="w-8 h-48 ml-4 bg-green-500 rounded-full overflow-hidden mt-2">
-                    <div
-                      style={{
-                        height: `${(1 - rightvalue) * 100}%`,
-                        transitionTimingFunction: "ease-in-out",
-                        transition: "0.2s",
-                      }}
-                      className="h-full bg-gray-800"
-                    ></div>
-                  </div>
+                <div className="w-8 h-48 ml-4 bg-green-500 rounded-full overflow-hidden mt-2">
+                  <div
+                    style={{
+                      height: `${(1 - rightvalue) * 100}%`,
+                      transitionTimingFunction: "ease-in-out",
+                      transition: "0.2s",
+                    }}
+                    className="h-full bg-gray-800"
+                  ></div>
                 </div>
               </div>
             </div>
-
-            {/* Rotation Channels */}
-
-            <div className="flex-col m-10 bg-gray-900 justify-center items-center flex w-52 h-52 rounded-2xl gap-2">
-              <h3> Face Rotation </h3>
-              <CiLocationArrow1
-                size={100}
-                style={{
-                  rotate: `${-135 + faceAngle}deg`,
-                  transitionTimingFunction: "ease-in-out",
-                  transition: "0.2s",
-                }}
-                className="mt-4"
-              />
-              <h4 className="text-center text-slate-400">
-                {" "}
-                {Math.round(faceAngle)}°
-              </h4>
-            </div>
+          </div>
+          <div className="flex-col mt-5 bg-gray-900 justify-center items-center flex w-52 h-52 rounded-2xl gap-2">
+            <h3> Face Rotation </h3>
+            <CiLocationArrow1
+              size={100}
+              style={{
+                rotate: `${-135 + faceAngle}deg`,
+                transitionTimingFunction: "ease-in-out",
+                transition: "0.2s",
+              }}
+              className="mt-4"
+            />
+            <h4 className="text-center text-slate-400">
+              {" "}
+              {Math.round(faceAngle)}°
+            </h4>
+          </div>{" "}
+        </div>
+        <div>
+          <div className="relative">
+            {" "}
+            <Webcam
+              ref={webcamRef}
+              style={{
+                marginLeft: "auto",
+                marginRight: "auto",
+                left: 0,
+                right: 0,
+                textAlign: "center",
+                zIndex: 9,
+                width: 640,
+                height: 480,
+                borderRadius: 20,
+              }}
+              mirrored={true}
+            />
+            <canvas
+              ref={canvasRef}
+              style={{
+                marginLeft: "auto",
+                marginRight: "auto",
+                marginTop: -480,
+                left: 0,
+                right: 0,
+                textAlign: "center",
+                zIndex: 9,
+                width: 640,
+                height: 480,
+                transform: "scaleX(-1)", // Apply horizontal mirroring
+              }}
+            />
+          </div>
+          
+          <div className="flex justify-center mt-5">
+            <audio
+              controls
+              style={{
+                width: "100%",
+              }}
+            >
+              <source src="/resources/audio.ogg" type="audio/ogg" />
+              <source src="/resources/audio.ogg" type="audio/mp3" />
+            </audio>
           </div>
         </div>
       </div>
-
     </>
   );
 }
