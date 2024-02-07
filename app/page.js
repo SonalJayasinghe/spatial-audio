@@ -51,7 +51,6 @@ export default function Home() {
   useEffect(() => {
     if (panNode) {
       panNode.pan.value = panControlValue || 0;
-      console.log(panControlValue);
     }
   }, [panNode, panControlValue]);
 
@@ -78,6 +77,7 @@ export default function Home() {
   useEffect(() => {
     if (audioIsPlaying && audioCtx) {
       const audioElt = document.querySelector("audio");
+      audioElt.resume()
       audioElt.play();
     }
   }, [audioIsPlaying, audioCtx]);
@@ -263,7 +263,7 @@ export default function Home() {
               }}
             >
               <source src="/resources/audio.ogg" type="audio/ogg" />
-              <source src="/resources/audio.ogg" type="audio/mp3" />
+              <source src="/resources/audio.mp3" type="audio/mp3" />
             </audio>
           </div>
           <div className=" justify-center flex items-center mt-2">
@@ -280,22 +280,21 @@ export default function Home() {
             </p>
           </div>
           <div className=" mt-10">
-          <h2> About the project </h2>
-          <p className="text-slate-400 mt-5">
-            {" "}
-            This is an experimental website for spatial audio using TensorflowJS
-            Face-Landmarks-Detection. <br />
-            Curruntly the yaw rotation of the face is used to control the
-            audio panning. <br />
-            <br />
-            <b>
-              Google Chrome and Headphones/Buds are recommended for the best
-              experience.
-            </b>
-          </p>
+            <h2> About the project </h2>
+            <p className="text-slate-400 mt-5">
+              {" "}
+              This is an experimental website for spatial audio using
+              TensorflowJS Face-Landmarks-Detection. <br />
+              Curruntly the yaw rotation of the face is used to control the
+              audio panning. <br />
+              <br />
+              <b>
+                Google Chrome and Headphones/Buds are recommended for the best
+                experience.
+              </b>
+            </p>
+          </div>
         </div>
-        </div>
-        
       </div>
     </>
   );
