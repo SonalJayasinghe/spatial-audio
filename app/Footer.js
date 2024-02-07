@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AiFillHeart } from "react-icons/ai";
 
 const Footer = () => {
   return (
@@ -12,9 +11,9 @@ const Footer = () => {
             href={"https://www.linkedin.com/in/sonaljayasinghe"}
             target={"_blank"}
           >
-            Sonal Jayasinghe {" "}
+            Sonal Jayasinghe{" "}
           </Link>
-          | Spatial Audio Expetiment 1.0.1 | 2024
+          | Spatial Audio Expetiment 1.0.0
         </p>
       </div>
     </footer>

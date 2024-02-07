@@ -254,7 +254,7 @@ export default function Home() {
               }}
             />
           </div>
-          
+
           <div className="flex justify-center mt-5">
             <audio
               controls
@@ -266,7 +266,36 @@ export default function Home() {
               <source src="/resources/audio.ogg" type="audio/mp3" />
             </audio>
           </div>
+          <div className=" justify-center flex items-center mt-2">
+            <p className=" text-slate-400">
+              {" "}
+              Audio From :{" "}
+              <a
+                href="https://www.youtube.com/watch?v=XQkvG0W8xEs"
+                target="_blank"
+              >
+                {" "}
+                Yaxer - Gajaga Wannama EDM Remix{" "}
+              </a>
+            </p>
+          </div>
+          <div className=" mt-10">
+          <h2> About the project </h2>
+          <p className="text-slate-400 mt-5">
+            {" "}
+            This is an experimental website for spatial audio using TensorflowJS
+            Face-Landmarks-Detection. <br />
+            Curruntly the yaw rotation of the face is used to control the
+            audio panning. <br />
+            <br />
+            <b>
+              Google Chrome and Headphones/Buds are recommended for the best
+              experience.
+            </b>
+          </p>
         </div>
+        </div>
+        
       </div>
     </>
   );
