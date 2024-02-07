@@ -12,7 +12,6 @@ export default function Home() {
   const [leftvalue, setLeftValue] = useState(0);
   const [rightvalue, setRightValue] = useState(0);
   const [faceAngle, setFaceAngle] = useState(0);
-
   const [audioCtx, setAudioCtx] = useState(null);
   const [panNode, setPanNode] = useState(null);
   const [panControlValue, setPanControlValue] = useState(0);
@@ -44,7 +43,6 @@ export default function Home() {
     setupPanningNode();
 
     return () => {
-      audioElt.removeEventListener("resume", handlePause);
       audioElt.removeEventListener("play", handlePlay);
     };
   }, [audioCtx]);
@@ -57,6 +55,11 @@ export default function Home() {
 
   const handlePlay = () => {
     setAudioIsPlaying(true);
+    if (audioCtx.state !== "running") {
+      audioCtx.resume().then(() => {
+        console.log("Playback resumed successfully");
+      });
+    }
   };
 
   const handlePause = () => {
@@ -78,7 +81,6 @@ export default function Home() {
   useEffect(() => {
     if (audioIsPlaying && audioCtx) {
       const audioElt = document.querySelector("audio");
-      audioElt.resume();
       audioElt.play();
     }
   }, [audioIsPlaying, audioCtx]);
@@ -163,11 +165,11 @@ export default function Home() {
 
   useEffect(() => {
     runFacemesh();
-  }, [1]);
+  }, []);
 
   return (
     <>
-      <div class="flex justify-center gap-10 ">
+      <div className="flex justify-center gap-10 ">
         <div>
           <div className="flex flex-col bg-gray-900 justify-center items-center w-52 h-80 rounded-2xl gap-7">
             <h3> Audio Channels Gain </h3>
@@ -262,6 +264,13 @@ export default function Home() {
               style={{
                 width: "100%",
               }}
+              onClick={() => {
+                if (!audioCtx) {
+                  const newAudioCtx = new (window.AudioContext ||
+                    window.webkitAudioContext)();
+                  setAudioCtx(newAudioCtx);
+                }
+              }}
             >
               <source src="/resources/audio.ogg" type="audio/ogg" />
               <source src="/resources/audio.mp3" type="audio/mp3" />
@@ -296,9 +305,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-        
       </div>
-    
     </>
   );
 }
