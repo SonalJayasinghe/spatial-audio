@@ -172,7 +172,7 @@ export default function FaceDitection() {
       <div className="flex justify-center gap-10 ">
         <div>
           <div className="flex flex-col bg-gray-900 justify-center items-center w-52 h-80 rounded-2xl gap-7">
-            <h3> Audio Channels Gain </h3>
+            <h3> Audio Channels</h3>
 
             <div className="flex gap-12">
               <div className="items-center">
