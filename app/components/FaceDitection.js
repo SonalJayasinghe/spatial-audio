@@ -300,8 +300,10 @@ export default function FaceDitection() {
               <br />
               <b>
                 Google Chrome and Headphones/Buds are recommended for the best
-                experience.
+                experience. <br/>
               </b>
+              We do not store any data from the user. All the renderings are happening on the client side.
+
             </p>
           </div>
         </div>
