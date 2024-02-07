@@ -44,6 +44,7 @@ export default function Home() {
     setupPanningNode();
 
     return () => {
+      audioElt.removeEventListener("resume", handlePause);
       audioElt.removeEventListener("play", handlePlay);
     };
   }, [audioCtx]);
@@ -77,7 +78,7 @@ export default function Home() {
   useEffect(() => {
     if (audioIsPlaying && audioCtx) {
       const audioElt = document.querySelector("audio");
-      audioElt.resume()
+      audioElt.resume();
       audioElt.play();
     }
   }, [audioIsPlaying, audioCtx]);
@@ -295,7 +296,9 @@ export default function Home() {
             </p>
           </div>
         </div>
+        
       </div>
+    
     </>
   );
 }
