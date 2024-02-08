@@ -14,9 +14,14 @@ const Home = () => {
             {" "}
             Are You Ready to Experience the Spatial Audio?{" "}
           </h2>
+          <b className=" text-slate-400">
+            {" "}
+            Please ensure to face the camera directly at the beginning of the
+            session.{" "}
+          </b>
           <h4 className="text-xl mb-7 text-slate-500">
             Google Chrome and Headphones/Buds are recommended for the best
-            experience.{" "}
+            experience. <br />
           </h4>
           <button
             className=" bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl"
